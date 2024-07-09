@@ -71,46 +71,33 @@ export default {
     async handleSubmit() {
       try {
         if (this.mode === 'add') {
-          await apiService.post('paquetes', this.formData);
+          const response = await apiService.post('paquetes', this.formData);
+          this.$emit('addPackage', response.data); // Emitir el paquete agregado
         } else if (this.mode === 'edit') {
-          
-          await apiService.put('paquetes', this.selectedPackage.id, this.formData);
+          const response = await apiService.put(`paquetes/${this.selectedPackage.id}`, this.formData);
+          this.$emit('editPackage', response.data); // Emitir el paquete editado
         }
         this.resetFormAndSwitchMode('add');
       } catch (error) {
         console.error('Error al procesar la solicitud:', error);
-        
       }
     },
 
     updateFormData() {
-    if (this.selectedPackage) {
-      
-      if (this.mode === 'edit') {
+      if (this.selectedPackage) {
         this.formData = { ...this.selectedPackage };
       } else {
-        
-        this.formData = {
-          id: this.selectedPackage.id,
-          titulo: '',
-          informacion: '',
-          foto_url: '',
-          precio: 0,
-          tipo: '',
-        };
+        this.resetForm();
       }
-    }
-  },
+    },
 
     async confirmDelete() {
       try {
-        
-        await apiService.delete('paquetes', this.selectedPackage.id);
-        this.$emit('deletePackage');
+        await apiService.delete(`paquetes/${this.selectedPackage.id}`);
+        this.$emit('deletePackage', this.selectedPackage.id); // Emitir el ID del paquete eliminado
         this.resetFormAndSwitchMode('add');
       } catch (error) {
         console.error('Error al procesar la solicitud de eliminación:', error);
-        
       }
     },
 
@@ -132,6 +119,7 @@ export default {
 };
 </script>
 
+
 <style scoped>
   .form-group {
     margin-bottom: 15px;
@@ -149,7 +137,7 @@ export default {
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
-    margin-right:5px ;
+    margin-right: 5px;
     margin-bottom: 5px;
   }
 

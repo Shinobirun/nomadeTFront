@@ -23,4 +23,16 @@ export default {
   delete(resource) {
     return axios.delete(`${BASE_URL}/${resource}`);
   },
+
+  addPaquete(data) {
+    return this.post('paquetes', data);
+  },
+
+  updatePaquete(id, data) {
+    return this.put(`paquetes/${id}`, data);
+  },
+
+  deletePaquete(id) {
+    return this.delete(`paquetes/${id}`);
+  },
 };

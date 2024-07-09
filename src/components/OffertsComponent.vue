@@ -5,7 +5,7 @@
     </div>
     <div v-else class="offer-container">
       <div v-for="offer in filteredOffers" :key="offer.id" class="offer">
-        <img :src="require(`../assets/images/${offer.foto_url}`)" :alt="`Oferta ${offer.id}`">
+        <img :src="offer.foto_url ? require(`../assets/images/${offer.foto_url}`) : require('../assets/images/default.jpg')" :alt="`Oferta ${offer.id}`">
         <h3>{{ offer.titulo }}</h3>
         <p>{{ offer.informacion }}</p>
         <a @click="editOfferPackage(offer)">Editar</a>
@@ -21,7 +21,6 @@
       @editPackage="editPackage"
       @deletePackage="deletePackage"
       :switchMode="switchMode"
-      :editOfferPackage="editOfferPackage"
     />
   </section>
 </template>
@@ -65,7 +64,7 @@ export default {
     },
   },
   watch: {
-    tipoDePaquete: function (newTipoDePaquete) {
+    tipoDePaquete(newTipoDePaquete) {
       this.loading = true;
       this.fetchOffers(newTipoDePaquete);
     },
@@ -103,10 +102,19 @@ export default {
       }
     },
 
-    
+    addPackage(newPackage) {
+      this.offers.push(newPackage); // Añadir el nuevo paquete a la lista local
+    },
 
-    resetFormAndSwitchMode(newMode) {
-      this.$refs.PaqueteForm.resetFormAndSwitchMode(newMode);
+    editPackage(updatedPackage) {
+      const index = this.offers.findIndex(offer => offer.id === updatedPackage.id);
+      if (index !== -1) {
+        this.$set(this.offers, index, updatedPackage); // Actualizar el paquete en la lista local
+      }
+    },
+
+    deletePackage(packageId) {
+      this.offers = this.offers.filter(offer => offer.id !== packageId); // Eliminar el paquete de la lista local
     },
 
     switchMode(newMode) {
@@ -115,6 +123,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .offers {
