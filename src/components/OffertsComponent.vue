@@ -5,7 +5,7 @@
     </div>
     <div v-else class="offer-container">
       <div v-for="offer in filteredOffers" :key="offer.id" class="offer">
-        <img :src="offer.foto_url ? require(`../assets/images/${offer.foto_url}`) : require('../assets/images/default.jpg')" :alt="`Oferta ${offer.id}`">
+        <img :src="offer.foto_url ? require(`../assets/images/${offer.foto_url}`) : ''" :alt="`Oferta ${offer.id}`">
         <h3>{{ offer.titulo }}</h3>
         <p>{{ offer.informacion }}</p>
         <a @click="editOfferPackage(offer)">Editar</a>
@@ -104,6 +104,9 @@ export default {
 
     addPackage(newPackage) {
       this.offers.push(newPackage); // Añadir el nuevo paquete a la lista local
+      setTimeout(() => {
+        window.location.reload(); // Recargar la página después de un retraso de 2 segundos
+      }, 0);
     },
 
     editPackage(updatedPackage) {
@@ -111,10 +114,16 @@ export default {
       if (index !== -1) {
         this.$set(this.offers, index, updatedPackage); // Actualizar el paquete en la lista local
       }
+      setTimeout(() => {
+        window.location.reload(); // Recargar la página después de un retraso de 2 segundos
+      }, 0);
     },
 
     deletePackage(packageId) {
       this.offers = this.offers.filter(offer => offer.id !== packageId); // Eliminar el paquete de la lista local
+      setTimeout(() => {
+        window.location.reload(); // Recargar la página después de un retraso de 2 segundos
+      }, 0);
     },
 
     switchMode(newMode) {
