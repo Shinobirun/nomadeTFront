@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="copy-right">
-      <p>&copy; 2023 Nosotros Turismo. Todos los derechos reservados.</p>
+      <p>&copy; 2024 Nómade Turismo. Todos los derechos reservados.</p>
     </div>
   </footer>
 </template>

@@ -4,21 +4,26 @@
     <main>
       <BannerComponent />
       <div>
-        <OffertComponent :tipoDePaquete="tipoDePaquete" :paquetesAMostrar="paquetesAMostrar" />
+        <!-- Agregar el desplegable para seleccionar el tipo de paquete -->
+        <div class="filter-container">
+          <label for="tipoPaquete">Selecciona un tipo de paquete:</label>
+          <select id="tipoPaquete" v-model="selectedTipoPaquete" @change="filtrarPaquetes">
+            <option v-for="tipo in tiposDePaquetes" :key="tipo" :value="tipo">{{ tipo }}</option>
+          </select>
+        </div>
+        <OffertComponent :tipoDePaquete="selectedTipoPaquete" :paquetesAMostrar="paquetesFiltrados" />
       </div>
-      <WhatsappComponent></WhatsappComponent>
+      <WhatsappComponent />
     </main>
     <FooterComponent />
   </div>
 </template>
 
-
-<script>  
+<script>
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import BannerComponent from '@/components/BannerComponent.vue'
 import OffertComponent from '@/components/OffertsComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
-
 import WhatsappComponent from '@/components/WhatsappComponent.vue'
 
 export default {
@@ -29,7 +34,14 @@ export default {
     OffertComponent,
     WhatsappComponent,
     FooterComponent,
-    
+  },
+  data() {
+    return {
+      selectedTipoPaquete: 'aventura', // Tipo de paquete seleccionado
+      tiposDePaquetes: ['aventura', 'cultural', 'relajacion', 'naturaleza'], // Tipos de paquetes disponibles
+      paquetesAMostrar: [], // Paquetes filtrados a mostrar
+      paquetesFiltrados: [],
+    };
   },
   props: {
     tipoDePaquete: {
@@ -37,36 +49,47 @@ export default {
       default: 'aventura'
     }
   },
-  data() {
-    return {
-      
-      paquetesAMostrar: ['aventura'], 
-    };
-    
-  },
   methods: {
-    mostrarDetails(oferta) {
-      this.mostrarDetalles = true;
-      this.ofertaSeleccionada = oferta;
-    },
-    ocultarDetalles() {
-      this.mostrarDetalles = false;
-      this.ofertaSeleccionada = null;
+    filtrarPaquetes() {
+      // Filtrar los paquetes según el tipo seleccionado
+      this.paquetesFiltrados = this.paquetesAMostrar.filter(paquete => paquete.tipo === this.selectedTipoPaquete);
     }
+  },
+  mounted() {
+    // Inicializar la lista de paquetes a mostrar
+    this.paquetesAMostrar = [
+      { tipo: 'aventura', nombre: 'Paquete Aventura 1' },
+      { tipo: 'cultural', nombre: 'Paquete Cultural 1' },
+      { tipo: 'relajacion', nombre: 'Paquete Relajación 1' },
+      { tipo: 'naturaleza', nombre: 'Paquete Naturaleza 1' },
+      // Agrega más paquetes según sea necesario
+    ];
+    // Aplicar el filtro inicial
+    this.filtrarPaquetes();
   }
 }
 </script>
 
 <style scoped>
-/* Estilos específicos de la página de inicio */
 .body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f09012;
+  background-size: cover;
+  background-attachment: fixed;
+}
 
-font-family: 'Roboto', sans-serif;
-margin: 0;
-padding: 0;
-/*background-image: url('../assets/images/playaMuelle.jpg');*/
-background-color: #f09012;
-background-size: cover; /* Ajusta la imagen al tamaño del viewport */
-background-attachment: fixed; /* Fija la imagen de fondo para que no se desplace con el contenido */
+.filter-container {
+  margin: 20px;
+  text-align: center;
+}
+
+.filter-container label {
+  margin-right: 10px;
+}
+
+.filter-container select {
+  padding: 5px;
 }
 </style>
