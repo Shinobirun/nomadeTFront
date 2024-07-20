@@ -6,7 +6,7 @@ import ContactoView from '@/views/ContactoView.vue';
 import ToursView from '@/views/ToursView.vue';
 import RelaxComponent from '../components/RelaxComponent.vue';
 import RomanticComponent from '../components/RomanticComponent.vue'
-import LoginModalComponent from '../components/LoginModalComponent.vue'
+import LoginView from '@/views/LoginView.vue';
 
 const routes = [
   {
@@ -49,7 +49,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: LoginModalComponent 
+    component: LoginView 
   },
   
   // Agrega más rutas aquí si es necesario
