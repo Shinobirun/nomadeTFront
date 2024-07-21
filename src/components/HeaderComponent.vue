@@ -8,14 +8,13 @@
         <li><a href="/"><img src="../assets/images/icons/travelling_2060284.png" alt="Inicio"> Inicio</a></li>
         <li><a href="/tours"><img src="../assets/images/icons/map_1934285.png" alt="Tours"> Tours</a></li>
         <li><a href="/contacto"><img src="../assets/images/icons/reception_1934306.png" alt="Contacto"> Contacto</a></li>
-        <li v-if="!isAuthenticated"><a href="#" @click="abrirModal"><img src="../assets/images/icons/luggage_1934282.png" alt="Login"> Login</a></li>
-        <li v-if="isAuthenticated">
-          <span>Hola, {{ userName }}</span>
-          <button @click="logout">Cerrar sesión</button>
-        </li>
+        <li><a href="#" @click="abrirModal"><img src="../assets/images/icons/luggage_1934282.png" alt="Login"> Login</a></li>
+        <li><a href="/registro"><img src="../assets/images/icons/rating_1934299.png" alt="Contacto"> Registro</a></li>
+        <li v-if="user"><span>Hola, {{ user.first_name }}</span> <button @click="logout">Logout</button></li>
       </ul>
     </nav>
-    <div class="hamburger-menu" @click="toggleMenu">
+    <div class="hamburger-menu">
+      <li v-if="user"><span>Hola, {{ user.first_name }}</span> <button @click="logout">Logout</button></li>
       <div class="bar"></div>
       <div class="bar"></div>
       <div class="bar"></div>
@@ -25,64 +24,61 @@
         <li><a href="/"><img src="../assets/images/icons/travelling_2060284.png" alt="Inicio"> Inicio</a></li>
         <li><a href="/tours"><img src="../assets/images/icons/map_1934285.png" alt="Tours"> Tours</a></li>
         <li><a href="/contacto"><img src="../assets/images/icons/reception_1934306.png" alt="Contacto"> Contacto</a></li>
-        <li v-if="!isAuthenticated"><a href="#" @click="abrirModal"><img src="../assets/images/icons/luggage_1934282.png" alt="Login"> Login</a></li>
-        <li v-if="isAuthenticated">
-          <span>{{ userName }}</span>
-          <button @click="logout">Cerrar sesión</button>
-        </li>
+        <li><a href="#" @click="abrirModal"><img src="../assets/images/icons/luggage_1934282.png" alt="Login"> Login</a></li>
+        <li v-if="user"><span>Hola, {{ user.first_name }}</span> <button @click="logout">Logout</button></li>
       </ul>
     </nav>
-    <LoginModalComponent v-show="mostrarModal" @close="cerrarModal" @login="handleLogin" />
+    <LoginModalComponent v-show="mostrarModal" @close="cerrarModal" @login="mounted" />   
   </header>
-</template>>
+</template>
+
 
 <script>
   import LoginModalComponent from './LoginModalComponent.vue';
 
   export default {
-    name: 'HeaderComponent',
-    components: {
-      LoginModalComponent,
+  name: 'HeaderComponent',
+  components: {
+    LoginModalComponent,
+  },
+  data() {
+    return {
+      mensaje: 'Componente Contacto',
+      mostrarModal: false,
+      user: null,
+    };
+  },
+  methods: {
+    abrirModal() {
+      this.mostrarModal = true;
     },
-    data() {
-      return {
-        mostrarModal: false,
-        userName: localStorage.getItem('userName') || '',
-      };
+    cerrarModal() {
+      this.mostrarModal = false;
+      location.reload(); // Recargar la página
     },
-    computed: {
-      isAuthenticated() {
-        return !!localStorage.getItem('token');
-      }
-    },
-    methods: {
-      abrirModal() {
-        this.mostrarModal = true;
-      },
-      cerrarModal() {
-        this.mostrarModal = false;
-        window.location.reload(); 
-      },
-      handleLogin() {
-        this.userName = localStorage.getItem('userName');
-        this.$forceUpdate(); // Forzar actualización del componente
-      },
-      logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userName');
-        this.userName = '';
-        window.location.reload(); 
-      },
-      toggleMenu() {
-        
-        const navHamburguer = document.querySelector('.nav-hamburguer');
-
-        if (window.getComputedStyle(navHamburguer).display !== 'none') {
-          navHamburguer.classList.toggle('active');
-        }
-      }
+    logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      location.reload(); // Recargar la página
     }
-  };
+  },
+  mounted() {
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const navHamburguer = document.querySelector('.nav-hamburguer');
+
+    hamburgerMenu.addEventListener('click', function() {
+      if (window.getComputedStyle(navHamburguer).display !== 'none') {
+        navHamburguer.classList.toggle('active');
+      }
+    });
+
+    // Obtener los datos del usuario desde localStorage
+    const user = localStorage.getItem('user');
+    if (user) {
+      this.user = JSON.parse(user);
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -149,7 +145,7 @@ li {
   margin-right: 20px; /* Espacio entre elementos del menú */
 }
 
-a {
+a , span {
   text-decoration: none;
   color: #ffff;
   font-weight: bold;

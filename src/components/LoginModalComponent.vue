@@ -42,7 +42,8 @@ export default {
         if (response.status >= 200 && response.status < 300) {
           // Almacenar el token JWT en localStorage o Vuex
           localStorage.setItem('token', response.data.token);
-          localStorage.setItem('userName', response.data.user);
+          
+          localStorage.setItem('user', JSON.stringify(response.data.user));
 
           this.cerrarModal();
           this.$emit('login');
