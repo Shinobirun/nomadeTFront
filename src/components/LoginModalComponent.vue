@@ -4,8 +4,8 @@
     <div class="modal-content">
       <h2>Iniciar Sesión</h2>
       <form @submit.prevent="iniciarSesion">
-        <input v-model="username" type="text" name="username" placeholder="Nombre de usuario">
-        <input v-model="password" type="password" placeholder="Contraseña">
+        <input v-model="email" type="text" name="email" placeholder="Correo electrónico">
+        <input v-model="password" type="password" name="password" placeholder="Contraseña">
         <button type="submit">Iniciar Sesión</button>
       </form>
       <button @click="cerrarModal">Cerrar</button>
@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       mostrarModal: false,
-      username: '',
+      email: '',
       password: ''
     };
   },
@@ -31,22 +31,29 @@ export default {
     },
     async iniciarSesion() {
       try {
-        const response = await axiosInstance.post('iniciar_sesion/', {
-          username: this.username,
+        const response = await axiosInstance.post('/login', {
+          email: this.email,
           password: this.password
         });
 
-        console.log('Datos de inicio de sesión:', this.username, this.password);
+        console.log('Datos de inicio de sesión:', this.email, this.password);
         console.log('Respuesta del servidor:', response.data);
 
         if (response.status >= 200 && response.status < 300) {
+          // Almacenar el token JWT en localStorage o Vuex
+          localStorage.setItem('token', response.data.token);
+          
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+
           this.cerrarModal();
+          this.$emit('login');
+          window.location.reload(); 
         }
       } catch (error) {
         console.error('Error en la respuesta:', error.response);
 
-        if (error.response && error.response.status === 400) {
-          alert(`Error: ${error.response.data.mensaje || 'Nombre de usuario o contraseña incorrectos.'}`);
+        if (error.response && error.response.status === 401) {
+          alert(`Error: ${error.response.data.error || 'Correo electrónico o contraseña incorrectos.'}`);
         } else {
           alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
         }

@@ -1,70 +1,83 @@
 <template>
   <header>
-      <div class="logo">
-          <img src="../assets/images/Logotipo_Nomade.png" alt="Logo de Nosotros">
-      </div>
-      <nav class="normal-menu">
-          <ul>
-              <li><a href="/"><img src="../assets/images/icons/travelling_2060284.png" alt="Inicio"> Inicio</a></li>
-              <li><a href="/tours"><img src="../assets/images/icons/map_1934285.png" alt="Tours"> Tours</a></li>
-              <li><a href="/contacto"><img src="../assets/images/icons/reception_1934306.png" alt="Contacto"> Contacto</a></li>
-          </ul>
-      </nav>
-      <div class="hamburger-menu">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-      </div>
-      <nav class="nav-hamburguer">
-          <ul>
-              <li><a href="/"><img src="../assets/images/icons/travelling_2060284.png" alt="Inicio"> Inicio</a></li>
-              <li><a href="/tours"><img src="../assets/images/icons/map_1934285.png" alt="Tours"> Tours</a></li>
-              <li><a href="/contacto"><img src="../assets/images/icons/reception_1934306.png" alt="Contacto"> Contacto</a></li>
-          </ul>
-      </nav>
-
-      <LoginModalComponent v-show="mostrarModal" @close="cerrarModal" />   
+    <div class="logo">
+      <img src="../assets/images/Logotipo_Nomade.png" alt="Logo de Nosotros">
+    </div>
+    <nav class="normal-menu">
+      <ul>
+        <li><a href="/"><img src="../assets/images/icons/travelling_2060284.png" alt="Inicio"> Inicio</a></li>
+        <li><a href="/tours"><img src="../assets/images/icons/map_1934285.png" alt="Tours"> Tours</a></li>
+        <li><a href="/contacto"><img src="../assets/images/icons/reception_1934306.png" alt="Contacto"> Contacto</a></li>
+        <li><a href="#" @click="abrirModal"><img src="../assets/images/icons/luggage_1934282.png" alt="Login"> Login</a></li>
+        <li><a href="/registro"><img src="../assets/images/icons/rating_1934299.png" alt="Contacto"> Registro</a></li>
+        <li v-if="user"><span>Hola, {{ user.first_name }}</span> <button @click="logout">Logout</button></li>
+      </ul>
+    </nav>
+    <div class="hamburger-menu">
+      <li v-if="user"><span>Hola, {{ user.first_name }}</span> <button @click="logout">Logout</button></li>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <nav class="nav-hamburguer">
+      <ul>
+        <li><a href="/"><img src="../assets/images/icons/travelling_2060284.png" alt="Inicio"> Inicio</a></li>
+        <li><a href="/tours"><img src="../assets/images/icons/map_1934285.png" alt="Tours"> Tours</a></li>
+        <li><a href="/contacto"><img src="../assets/images/icons/reception_1934306.png" alt="Contacto"> Contacto</a></li>
+        <li><a href="#" @click="abrirModal"><img src="../assets/images/icons/luggage_1934282.png" alt="Login"> Login</a></li>
+        <li v-if="user"><span>Hola, {{ user.first_name }}</span> <button @click="logout">Logout</button></li>
+      </ul>
+    </nav>
+    <LoginModalComponent v-show="mostrarModal" @close="cerrarModal" @login="mounted" />   
   </header>
 </template>
 
-<script>
-import LoginModalComponent from './LoginModalComponent.vue';
 
-export default {
+<script>
+  import LoginModalComponent from './LoginModalComponent.vue';
+
+  export default {
   name: 'HeaderComponent',
   components: {
-      LoginModalComponent,
+    LoginModalComponent,
   },
   data() {
-      return {
-          mensaje: 'Componente Contacto',
-          mostrarModal: false,
-      };
+    return {
+      mensaje: 'Componente Contacto',
+      mostrarModal: false,
+      user: null,
+    };
   },
   methods: {
-      abrirModal() {
-          this.mostrarModal = true;
-          console.log(this.mostrarModal);
-      },
-      cerrarModal() {
-          this.mostrarModal = false;
-          console.log(this.mostrarModal);
-      },
+    abrirModal() {
+      this.mostrarModal = true;
+    },
+    cerrarModal() {
+      this.mostrarModal = false;
+      location.reload(); // Recargar la página
+    },
+    logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      location.reload(); // Recargar la página
+    }
   },
   mounted() {
-      const hamburgerMenu = document.querySelector('.hamburger-menu');
-      const navHamburguer = document.querySelector('.nav-hamburguer');
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const navHamburguer = document.querySelector('.nav-hamburguer');
 
-      hamburgerMenu.addEventListener('click', function() {
-          console.log('Click en el menú hamburguesa');
-          if (window.getComputedStyle(navHamburguer).display !== 'none') {
-              navHamburguer.classList.toggle('active');
-              console.log('Clase active toggled');
-          }
-      });
+    hamburgerMenu.addEventListener('click', function() {
+      if (window.getComputedStyle(navHamburguer).display !== 'none') {
+        navHamburguer.classList.toggle('active');
+      }
+    });
 
-      //navHamburguer.style.display = 'block';
-  },
+    // Obtener los datos del usuario desde localStorage
+    const user = localStorage.getItem('user');
+    if (user) {
+      this.user = JSON.parse(user);
+    }
+  }
 };
 </script>
 
@@ -132,7 +145,7 @@ li {
   margin-right: 20px; /* Espacio entre elementos del menú */
 }
 
-a {
+a , span {
   text-decoration: none;
   color: #ffff;
   font-weight: bold;
